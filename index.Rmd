@@ -11,4 +11,4 @@ output:
 
 ## Project thoughts
 
-I am interested in exploring data related to public opinion on certain pressing issues, especially those that the Supreme Court have recently ruled on
+I am interested in exploring data related to public opinion on certain pressing issues, especially those that the Supreme Court have recently ruled on. Specifically, does the public opinion on an issue influence SCOTUS's decisions, and are they popular, or not?
