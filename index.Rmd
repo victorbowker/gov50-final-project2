@@ -15,11 +15,6 @@ How do Democrats and Republicans compare on their fear of the economic future? I
 
 
 ##Importing Data Set
-```{r}
-library(haven)
-dat <- read_sav("W110_Jun22/ATP W110.sav")
-View(dat)
-```
 
 
 
