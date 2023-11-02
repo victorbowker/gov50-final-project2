@@ -13,9 +13,6 @@ output:
 
 How do Democrats and Republicans compare on their fear of the economic future? I hypothesize the data will show that Democrats, who are currently represented by the current President, will feel more positive towards their future, as their leader is likely doing what they desire. Republicans are likely to feel that with the current leader is not representing their values and is impacting the economics negatively. This data could be compared with older data from a time when the White House was represented by a Republican, to test this hypothesis. My data set comes from Pew Research Center American Trends Poll from June 27th to July 4th of 2022. The explanatory variables will be the status of a polled person, whether they are Republican, Democrat, or Independent, coming from the F_Party_Final variable. My outcome variable will be the feeling of economic stability from the following variables - ECONCONC_INFL_W110, ECONCONC_UNEM_W110, ECONCONC_LAB_W110, ECONCONC_ENG_W110, ECONCONC_SHTG_W110, ECONCONC_REAL_W110, ECONCONC_STCK_W110. My hypothesis will be supported by data that indicates Democrats are more confident than Republicans in their economic status when a Democrat leader is in office. 
 
-##Demonstration
-
-
 To test the data set, see code and a graph below. This plot demonstrates the approval proportion of Pres. Biden between Republicans and Democrats, as well as Men and Women
 ```{r}
 ##load and label data set
