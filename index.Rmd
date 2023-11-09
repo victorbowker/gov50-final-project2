@@ -13,13 +13,17 @@ output:
 
 How do Democrats and Republicans compare on their fear of the economic future? I hypothesize the data will show that Democrats, who are currently represented by the current President, will feel more positive towards their future, as their leader is likely doing what they desire. Republicans are likely to feel that with the current leader is not representing their values and is impacting the economics negatively. This data could be compared with older data from a time when the White House was represented by a Republican, to test this hypothesis. My data set comes from Pew Research Center American Trends Poll from June 27th to July 4th of 2022. The explanatory variables will be the status of a polled person, whether they are Republican, Democrat, or Independent, coming from the F_Party_Final variable. My outcome variable will be the feeling of economic stability from the following variables - ECONCONC_INFL_W110, ECONCONC_UNEM_W110, ECONCONC_LAB_W110, ECONCONC_ENG_W110, ECONCONC_SHTG_W110, ECONCONC_REAL_W110, ECONCONC_STCK_W110. My hypothesis will be supported by data that indicates Democrats are more confident than Republicans in their economic status when a Democrat leader is in office. 
 
-To test the data set, see code and a graph below. This plot demonstrates the approval proportion of Pres. Biden between Republicans and Democrats, as well as Men and Women
-```{r}
+To test the data set, see code and a graph below. This plot demonstrates the approval proportion of Pres. Biden between Republicans and Democrats, as well as Men and Women. 
+
+
+```{r eval=FALSE}
 ##load and label data set
 library(tidyverse)
 library(haven)
 dat <- read_sav("W110_Jun22/ATP W110.sav")
-
+dat1 <- read_sav("W110_Jun22/ATP W110.sav")
+```
+```{r eval=FALSE}
 ##simplify variable names, mutate new variables
 dat <- dat |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat"), 
@@ -40,5 +44,159 @@ plots <-
 plots
 
 ```
+```{r eval=FALSE}
+infl <-
+  dat1 |>
+  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
+  mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  group_by(Party, Gender) |>
+  summarize(mean_support = mean(ECONCONC_INFL_W110))
+```
+```{r eval=FALSE}
+infl_graph <-
+  infl |>
+  ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
+  geom_col(position = "dodge") + 
+  labs(title = "ECONCONC_INFL_W110")
+
+infl_graph
+```
+
+
+ECONCONC_INFL_W110,
+ECONCONC_UNEM_W110,
+ECONCONC_LAB_W110,
+ECONCONC_ENG_W110,
+ECONCONC_SHTG_W110,
+ECONCONC_REAL_W110,
+ECONCONC_STCK_W110)
+
+
+  mutate(support_level = case_when(ECONCONC_INFL_W110 == 1 ~ "A Lot",
+                   ECONCONC_INFL_W110 == 2 ~ "Some",
+                   ECONCONC_INFL_W110 == 3 ~ "Not Much",
+                   ECONCONC_INFL_W110 == 4 ~ "Nothing At All"))
+
+```{r eval=FALSE}
+unem <-
+  dat1 |>
+  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
+  mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  group_by(Party, Gender) |>
+  summarize(mean_support = mean(ECONCONC_UNEM_W110))
+```
+
+```{r eval=FALSE}
+unem_graph <-
+  unem |>
+  ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
+  geom_col(position = "dodge") + 
+  labs(title = "ECONCONC_UNEM_W110")
+
+unem_graph
+```
+
+
+```{r eval=FALSE}
+lab <-
+  dat1 |>
+  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
+  mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  group_by(Party, Gender) |>
+  summarize(mean_support = mean(ECONCONC_LAB_W110))
+```
+
+```{r eval=FALSE}
+lab_graph <-
+  lab |>
+  ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
+  geom_col(position = "dodge") + 
+  labs(title = "ECONCONC_LAB_W110")
+
+lab_graph
+```
+```{r eval=FALSE}
+eng <-
+  dat1 |>
+  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
+  mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  group_by(Party, Gender) |>
+  summarize(mean_support = mean(ECONCONC_ENG_W110))
+```
+
+```{r eval=FALSE}
+eng_graph <-
+  eng |>
+  ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
+  geom_col(position = "dodge") + 
+  labs(title = "ECONCONC_ENG_W110")
+
+eng_graph
+```
+
+```{r eval=FALSE}
+shtg <-
+  dat1 |>
+  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
+  mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  group_by(Party, Gender) |>
+  summarize(mean_support = mean(ECONCONC_SHTG_W110))
+```
+
+```{r eval=FALSE}
+shtg_graph <-
+  shtg |>
+  ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
+  geom_col(position = "dodge") + 
+  labs(title = "ECONCONC_SHTG_W110")
+
+shtg_graph
+```
+
+```{r eval=FALSE}
+real <-
+  dat1 |>
+  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
+  mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  group_by(Party, Gender) |>
+  summarize(mean_support = mean(ECONCONC_REAL_W110))
+```
+
+```{r eval=FALSE}
+real_graph <-
+  real |>
+  ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
+  geom_col(position = "dodge") + 
+  labs(title = "ECONCONC_REAL_W110")
+
+real_graph
+```
+
+
+
+
+```{r eval=FALSE}
+stck <-
+  dat1 |>
+  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
+  mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  group_by(Party, Gender) |>
+  summarize(mean_support = mean(ECONCONC_STCK_W110))
+```
+
+```{r eval=FALSE}
+stck_graph <-
+  stck |>
+  ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
+  geom_col(position = "dodge") + 
+  labs(title = "ECONCONC_STCK_W110")
+
+stck_graph
+```
+
+
+
+
+
 
 
