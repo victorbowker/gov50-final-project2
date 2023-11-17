@@ -16,14 +16,14 @@ How do Democrats and Republicans compare on their fear of the economic future? I
 To test the data set, see code and a graph below. This plot demonstrates the approval proportion of Pres. Biden between Republicans and Democrats, as well as Men and Women. 
 
 
-```{r eval=FALSE}
+```{r}
 ##load and label data set
 library(tidyverse)
 library(haven)
 dat <- read_sav("W110_Jun22/ATP W110.sav")
 dat1 <- read_sav("W110_Jun22/ATP W110.sav")
 ```
-```{r eval=FALSE}
+```{r}
 ##simplify variable names, mutate new variables
 dat <- dat |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat"), 
@@ -44,7 +44,8 @@ plots <-
 plots
 
 ```
-```{r eval=FALSE}
+
+```{r}
 infl <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
@@ -52,7 +53,7 @@ infl <-
   group_by(Party, Gender) |>
   summarize(mean_support = mean(ECONCONC_INFL_W110))
 ```
-```{r eval=FALSE}
+```{r}
 infl_graph <-
   infl |>
   ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
@@ -77,7 +78,7 @@ ECONCONC_STCK_W110)
                    ECONCONC_INFL_W110 == 3 ~ "Not Much",
                    ECONCONC_INFL_W110 == 4 ~ "Nothing At All"))
 
-```{r eval=FALSE}
+```{r}
 unem <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
@@ -86,7 +87,7 @@ unem <-
   summarize(mean_support = mean(ECONCONC_UNEM_W110))
 ```
 
-```{r eval=FALSE}
+```{r}
 unem_graph <-
   unem |>
   ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
@@ -97,7 +98,7 @@ unem_graph
 ```
 
 
-```{r eval=FALSE}
+```{r}
 lab <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
@@ -106,7 +107,7 @@ lab <-
   summarize(mean_support = mean(ECONCONC_LAB_W110))
 ```
 
-```{r eval=FALSE}
+```{r}
 lab_graph <-
   lab |>
   ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
@@ -115,7 +116,7 @@ lab_graph <-
 
 lab_graph
 ```
-```{r eval=FALSE}
+```{r}
 eng <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
@@ -124,7 +125,7 @@ eng <-
   summarize(mean_support = mean(ECONCONC_ENG_W110))
 ```
 
-```{r eval=FALSE}
+```{r}
 eng_graph <-
   eng |>
   ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
@@ -134,7 +135,7 @@ eng_graph <-
 eng_graph
 ```
 
-```{r eval=FALSE}
+```{r}
 shtg <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
@@ -143,7 +144,7 @@ shtg <-
   summarize(mean_support = mean(ECONCONC_SHTG_W110))
 ```
 
-```{r eval=FALSE}
+```{r}
 shtg_graph <-
   shtg |>
   ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
@@ -153,7 +154,7 @@ shtg_graph <-
 shtg_graph
 ```
 
-```{r eval=FALSE}
+```{r}
 real <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
@@ -162,7 +163,7 @@ real <-
   summarize(mean_support = mean(ECONCONC_REAL_W110))
 ```
 
-```{r eval=FALSE}
+```{r}
 real_graph <-
   real |>
   ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
@@ -175,7 +176,7 @@ real_graph
 
 
 
-```{r eval=FALSE}
+```{r}
 stck <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
@@ -184,7 +185,7 @@ stck <-
   summarize(mean_support = mean(ECONCONC_STCK_W110))
 ```
 
-```{r eval=FALSE}
+```{r}
 stck_graph <-
   stck |>
   ggplot(mapping = aes(x = Party, y = mean_support, fill = Gender)) +
@@ -193,7 +194,6 @@ stck_graph <-
 
 stck_graph
 ```
-
 
 
 
