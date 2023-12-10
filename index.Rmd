@@ -6,6 +6,7 @@ output:
   distill::distill_article:
     self_contained: false
 ---
+F_AGECAT
 
 
 
@@ -22,15 +23,23 @@ library(tidyverse)
 library(haven)
 dat <- read_sav("W110_Jun22/ATP W110.sav")
 dat1 <- read_sav("W110_Jun22/ATP W110.sav")
+altdat <- read_sav("W52_Jul19/ATP W52.sav")
+
 ```
 ```{r}
 ##simplify variable names, mutate new variables
 dat <- dat |>
-  mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat"), 
-         Approval = if_else(POL1JB_W110 == 1, "Approve", "Disapprove"),
-         Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
+  mutate(
+    Party = if_else(PARTY_W110 == 1, "Republican", "Democrat"), 
+    Approval = if_else(POL1JB_W110 == 1, "Approve", "Disapprove"),
+    Gender = if_else(F_GENDER == 1, "Man", "Woman"),
+    Age = if_else(
+      F_AGECAT == 1, "18-29",
+      if_else(F_AGECAT == 2, "30-49",
+        if_else(F_AGECAT == 3, "50-64",
+          if_else(F_AGECAT == 4, "65+", "N/A"))))) |>
   group_by(Gender, Party) |>
-  summarize(count = n())|>
+  summarize(count = n()) |>
   mutate(proportion = count/sum(count))
 
 ##graph time
@@ -176,12 +185,19 @@ real_graph
 
 
 
+
 ```{r}
 stck <-
   dat1 |>
   mutate(Party = if_else(PARTY_W110 == 1, "Republican", "Democrat")) |>
   mutate(Gender = if_else(F_GENDER == 1, "Man", "Woman")) |>
-  group_by(Party, Gender) |>
+  mutate(Age = if_else(
+      F_AGECAT == 1, "18-29",
+      if_else(F_AGECAT == 2, "30-49",
+        if_else(F_AGECAT == 3, "50-64",
+          if_else(F_AGECAT == 4, "65+", "N/A"))))) |>
+  
+  group_by(Party, Gender, Age) |>
   summarize(mean_support = mean(ECONCONC_STCK_W110))
 ```
 
@@ -194,6 +210,193 @@ stck_graph <-
 
 stck_graph
 ```
+```{r}
+fit.stck <-
+  lm(mean_support ~ Party + Gender, data = stck)
+fit.stck
+```
+```{r}
+test_scatter <-
+  stck |>
+  ggplot(mapping = aes(x = mean_support, y = Age)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, col = "steelblue")
+  
+test_scatter
+
+```
+
+
+---
+output:
+  pdf_document: default
+  html_document: default
+---
+##prep work
+```{r}
+##loading data and identifying data sets
+library(tidyverse)
+library(haven)
+dat <- read_sav("W110_Jun22/ATP W110.sav")
+dat1 <- read_sav("W110_Jun22/ATP W110.sav")
+altdat <- read_sav("W52_Jul19/ATP W52.sav")
+altdat1 <- read_sav("W52_Jul19/ATP W52.sav")
+```
+
+```{r}
+##mutating to simplify label names
+dat <- dat |>
+  mutate(
+    Party = if_else(PARTY_W110 == 1, "Republican", "Democrat"), 
+    Approval = if_else(POL1JB_W110 == 1, "Approve", "Disapprove"),
+    Gender = if_else(F_GENDER == 1, "Man", "Woman"),
+    Age = if_else(
+      F_AGECAT == 1, "18-29",
+      if_else(F_AGECAT == 2, "30-49",
+        if_else(F_AGECAT == 3, "50-64",
+          if_else(F_AGECAT == 4, "65+", "N/A")))))
+```
+
+```{r}
+##mutating to simplify label names
+altdat <- 
+  altdat |>
+  mutate(
+    Party = if_else(F_PARTY_FINAL == 1, "Republican", "Democrat"), 
+    Gender = if_else(F_SEX == 1, "Man", "Woman"),
+    Approval = if_else(POL1DT_W52 == 1, "Approve", "Disapprove"), 
+    Age = if_else(
+      F_AGECAT == 1, "18-29",
+      if_else(F_AGECAT == 2, "30-49",
+        if_else(F_AGECAT == 3, "50-64",
+          if_else(F_AGECAT == 4, "65+", "N/A")))))
+```
+
+##begin analysis 1
+```{r}
+##combine biden era and trump era data
+##independently researched this method
+
+combodat <- bind_rows(
+  mutate(dat, dataset = "Biden 1st Term"),
+  mutate(altdat, dataset = "Trump 1st Term"))
+
+## summarize data to what we need
+summdat1 <- combodat |>
+  group_by(Approval, Party, Gender, dataset) |>
+  summarize(count = n()) |>
+  mutate(altmean = count / sum(count))
+
+```
+
+```{r}
+##graphing approval first
+ggplot(summdat1, aes(x = Approval, y = altmean, fill = Party)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  facet_grid(rows = vars(Gender), cols = vars(dataset)) +
+  labs(title = "Approval Ratings by Party, Gender, and President",
+       x = "Approval",
+       y = "Proportion") +
+  scale_fill_manual(values = c(Democrat = "steelblue1", Republican = "indianred1"))
+```
+##analysis 2
+```{r}
+##summarize data to what we need
+summdat2 <- combodat |>
+    group_by(Approval, Party, Gender,ECON1_W52, ECON1_W110, dataset)
+
+```
+```{r}
+summdat2 <-
+  summdat2 |>
+  filter(ECON1_W52 == 1 | ECON1_W52 == 2 | ECON1_W52 == 3 | ECON1_W52 == 4 | 
+           ECON1_W110 == 1 | ECON1_W110 == 2 | ECON1_W110 == 3 | ECON1_W110 == 4) |>
+  mutate(ECON1_W52 = if_else(ECON1_W52 == 1, "Excellent",
+                             if_else(ECON1_W52 == 2, "Good",
+                                     if_else(ECON1_W52 == 3, "Only Fair",
+                                             if_else(ECON1_W52 == 4, "Poor", "N/A"))))) |>
+    mutate(ECON1_W110 = if_else(ECON1_W110 == 1, "Excellent",
+                             if_else(ECON1_W110 == 2, "Good",
+                                     if_else(ECON1_W110 == 3, "Only Fair",
+                                            if_else(ECON1_W110 == 4, "Poor", "N/A"))))) |>
+    mutate(ECON1B_W52 = if_else(ECON1B_W52 == 1, "Better",
+                             if_else(ECON1B_W52 == 2, "Worse",
+                                     if_else(ECON1B_W52 == 3, "About Same", "N/A")))) |>
+    mutate(ECON1B_W110 = if_else(ECON1B_W110 == 1, "Better",
+                             if_else(ECON1B_W110 == 2, "Worse",
+                                     if_else(ECON1B_W110 == 3, "About Same", "N/A"))))
+```
+```{r}
+avg_response_52 <-
+  summdat2 |>
+  group_by(ECON1_W52, Gender, Party) |>
+  summarize(count1 = n()) |>
+  mutate(avg = count1 / sum(count1)) |>
+  ggplot(mapping = aes(x = Party, y = avg, fill = Gender)) +
+  geom_col()
+
+
+
+
+
+
+```
+```{r}
+##trump
+avg_response_52 <- summdat2 %>%
+  group_by(ECON1_W52, Gender, Party) %>%
+  summarize(count1 = n()) %>%
+  mutate(avg = count1 / sum(count1)) %>%
+  ggplot(mapping = aes(x = ECON1_W52, y = avg, fill = Party)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average Responses by Party, Gender, and ECON1_W52",
+       x = "ECON1_W52",
+       y = "Proportion")
+avg_response_52
+```
+
+
+```{r}
+##biden
+avg_response_110 <- summdat2 %>%
+  group_by(ECON1_W110, Gender, Party) %>%
+  summarize(count1 = n()) %>%
+  mutate(avg = count1 / sum(count1)) %>%
+  ggplot(mapping = aes(x = ECON1_W110, y = avg, fill = Party)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average Responses by Party, Gender, and ECON1_W110",
+       x = "ECON1_W110",
+       y = "Proportion")
+avg_response_110
+```
+```{r}
+##trump
+avg_response_52_2 <- summdat2 %>%
+  group_by(ECON1B_W52, Gender, Party) %>%
+  summarize(count1 = n()) %>%
+  mutate(avg = count1 / sum(count1)) %>%
+  ggplot(mapping = aes(x = ECON1B_W52, y = avg, fill = Party)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average Responses by Party, Gender, and ECON1B_W52",
+       x = "ECON1B_W52",
+       y = "Proportion")
+avg_response_52_2
+```
+
+```{r}
+##biden
+avg_response_110_2 <- summdat2 %>%
+  group_by(ECON1B_W110, Gender, Party) %>%
+  summarize(count1 = n()) %>%
+  mutate(avg = count1 / sum(count1)) %>%
+  ggplot(mapping = aes(x = ECON1B_W110, y = avg, fill = Party)) +
+  geom_col(position = "dodge") +
+  labs(title = "Average Responses by Party, Gender, and ECON1B_W110",
+       x = "ECON1B_W110",
+       y = "Proportion")
+avg_response_110_2
+```
+
 
 
 
