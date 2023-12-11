@@ -12,7 +12,6 @@ output:
   pdf_document: default
   html_document: default
 ---
-##prep work
 ```{r}
 ##loading data and identifying data set
 library(tidyverse)
@@ -33,6 +32,17 @@ var <- dat |>
         if_else(F_AGECAT == 3, "50-64",
           if_else(F_AGECAT == 4, "65+", "N/A")))))
 ```
+
+
+
+
+
+##biden approval rating
+
+
+
+
+
 ```{r}
 bidenvar <-
   var |>
@@ -51,21 +61,40 @@ scale_fill_manual(values = c(Democrat = "steelblue", Republican = "indianred")) 
 
 knitr::kable(bidenvar)
 ```
+
+
+
+##biden econ perspectives
+
+
+
+
+
+
 ```{r}
 var_biden <-
 var |>
-filter(ECON1_W110 == 1 | ECON1_W110 == 2 | ECON1_W110 == 3 | ECON1_W110 == 4 | ECON1_W110 == 5 |
-ECON1B_W110 == 1 | ECON1B_W110 == 2 | ECON1B_W110 == 3 | ECON1B_W110 == 4) |>
+filter(ECON1_W110 == 1 | ECON1_W110 == 2 | ECON1_W110 == 3 | ECON1_W110 == 4 | ECON1_W110 == 5)|>
 mutate(ECON1_W110 = if_else(ECON1_W110 == 1, "Excellent",
 if_else(ECON1_W110 == 2, "Good",
 if_else(ECON1_W110 == 3, "Only Fair",
 if_else(ECON1_W110 == 4, "Poor", "No Change"))))) |>
+group_by(Party, Gender) |>
+count(ECON1_W110) |>
+mutate(pct = n / sum(n) *100 )
+
+var_biden2 <-
+var |>
+filter(ECON1B_W110 == 1 | ECON1B_W110 == 2 | ECON1B_W110 == 3 | ECON1B_W110 == 4) |>
 mutate(ECON1B_W110 = if_else(ECON1B_W110 == 1, "Better",
 if_else(ECON1B_W110 == 2, "Worse",          
 if_else(ECON1B_W110 == 3, "About Same", "Unsure")))) |>
 group_by(Party, Gender) |>
-count(ECON1_W110) |>
+count(ECON1B_W110) |>
 mutate(pct = n / sum(n) *100 )
+
+
+
 
 
 bruh <- 
@@ -78,12 +107,29 @@ labs(title = "Thoughts on Economy Under Biden",
 x = "Feelings Towards Economy",
 y = "Percentage") 
 
+
+
+bruh2 <- 
+var_biden2 |>
+ggplot(mapping = aes(x = ECON1B_W110, y = pct, fill = Party)) +
+geom_col(position = "dodge") +
+      facet_grid(rows = vars(Gender)) +
+scale_fill_manual(values = c(Democrat = "steelblue", Republican = "indianred")) +
+labs(title = "Thoughts on Future Economy Under Biden",
+x = "Feelings Towards Future Economy",
+y = "Percentage") 
+
+
 bruh
+bruh2
+
 
 
 
 
 knitr::kable(var_biden)
+knitr::kable(var_biden2)
+
 
 ```
 
@@ -113,6 +159,16 @@ mutate(
 
 
 ```
+
+
+
+
+##trump approval rating
+
+
+
+
+
 ```{r}
 trumpvar <-
   var |>
@@ -131,20 +187,37 @@ scale_fill_manual(values = c(Democrat = "steelblue", Republican = "indianred")) 
 
 knitr::kable(trumpvar)
 ```
+
+
+
+
+##trump econ perspectives
+
+
+
+
+
+
 ```{r}
 var_trump <-
 var |>
-filter(ECON1_W52 == 1 | ECON1_W52 == 2 | ECON1_W52 == 3 | ECON1_W52 == 4 | ECON1_W52 == 5 |
-ECON1B_W52 == 1 | ECON1B_W52 == 2 | ECON1B_W52 == 3 | ECON1B_W52 == 4) |>
+filter(ECON1_W52 == 1 | ECON1_W52 == 2 | ECON1_W52 == 3 | ECON1_W52 == 4 | ECON1_W52 == 5) |>
 mutate(ECON1_W52 = if_else(ECON1_W52 == 1, "Excellent",
 if_else(ECON1_W52 == 2, "Good",
 if_else(ECON1_W52 == 3, "Only Fair",
 if_else(ECON1_W52 == 4, "Poor", "No Change"))))) |>
+group_by(Party, Gender) |>
+count(ECON1_W52) |>
+mutate(pct = n / sum(n) *100 )
+
+var_trump2 <-
+var |>
+filter(ECON1B_W52 == 1 | ECON1B_W52 == 2 | ECON1B_W52 == 3 | ECON1B_W52 == 4) |>
 mutate(ECON1B_W52 = if_else(ECON1B_W52 == 1, "Better",
 if_else(ECON1B_W52 == 2, "Worse",          
 if_else(ECON1B_W52 == 3, "About Same", "Unsure")))) |>
 group_by(Party, Gender) |>
-count(ECON1_W52) |>
+count(ECON1B_W52) |>
 mutate(pct = n / sum(n) *100 )
 
 
@@ -158,11 +231,26 @@ labs(title = "Thoughts on Economy Under Trump",
 x = "Feelings Towards Economy",
 y = "Percentage") 
 
+
+bruh2 <- 
+var_trump2 |>
+ggplot(mapping = aes(x = ECON1B_W52, y = pct, fill = Party)) +
+geom_col(position = "dodge") +
+      facet_grid(rows = vars(Gender)) +
+scale_fill_manual(values = c(Democrat = "steelblue", Republican = "indianred")) +
+labs(title = "Thoughts on Future Economy Under Trump",
+x = "Feelings Towards Future Economy",
+y = "Percentage") 
+
 bruh
+bruh2
  
 knitr::kable(var_trump)
+knitr::kable(var_trump2)
 
 ```
+
+
 
 
 
